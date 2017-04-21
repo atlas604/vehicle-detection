@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 import cv2
 from lesson_functions import *
-from data import *
+from training_data import *
 
 import time
 from sklearn.svm import LinearSVC
