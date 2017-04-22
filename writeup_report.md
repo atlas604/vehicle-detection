@@ -50,6 +50,8 @@ I did this by using the extract_features() function mentioned earlier to extract
 
 The end result indicated a 99% performance accuracy using the parameters above.  
 
+---
+
 ### Sliding Window Search
 
 **1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?**
