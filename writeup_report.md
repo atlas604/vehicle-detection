@@ -17,7 +17,7 @@ The goals / steps of this project are the following:
 
 I use a series of functions combined with their properties into a function called `extract_features()` (lesson_functions.py line 52) to extract HOG features from the training images.  The steps consists of computing the gradient image in x and y coordinates to a chosen color space, computing the gradient histograms, normalizing the process and flattening everything into a feature vector.  The main algorithm utilized is scikit-image's hog feature that does the processing.  
 
-Examples of the hog feature images look like this:
+Examples of the hog feature images:
 
 <img src="./output_images/hog1.png">
 <img src="./output_images/hog2.png">
