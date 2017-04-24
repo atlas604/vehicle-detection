@@ -44,11 +44,12 @@ Final parameters:
 
 **3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).**
 
-I use scikit-learn's Linear Support Vector Classification (LinearSVC) to train my classifier (svc.py line 65).
-
-I did this by using the extract_features() function mentioned earlier to extract and create arrays for feature vectors and label vectors of the dataset of the cars and non-cars.  I then split the arrays and randomized the data into training and test sets, and executed the LinearSVC function to train the model.
-
-The end result indicated a 99% performance accuracy using the parameters above.  
+- I use scikit-learn's Linear Support Vector Classification (LinearSVC) to train my classifier (svc.py line 65).
+- During this process, I apply scikit-learn's StandardScaler to standardize the features extracted by removing the mean and scaling to unit variance  
+- By using the extract_features() function (lesson_functions.py line 52), I can extract and create arrays for the feature vectors and label vectors of the car and non-car datasets
+- I randomize and split the arrays into training data and test data sets
+- The LinearSVC function is executed in the end to train the model.
+- The end result projected a 99% performance accuracy using the parameters above.  
 
 ---
 
@@ -78,10 +79,15 @@ Here's a [link to my video result](./project_video_output.mp4)
 
 **2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.**
 
-As I mentioned earlier,
-- I filtered out the dead space and searched only where target cars would logically appear.  
-- I applied a threshold requiring a certain amount of pixels required for a bounding box to appear.  
-- Using scipy.ndimage.measurements' label algorithm, I can concatenate all the boxes into one and save the dimensions of the new box in another variable and draw it after.  
+- For my video pipeline, I use a hog sub-sampling window search that is more efficient than a sliding window pipeline
+- Reason being is that the hog features only have to be extracted once and sub-sampled to locate detected windows
+- To increase the accuracy, I run a hog sub-sampling window search twice with different scales and area of interest to apply a more calculated search based on the size of the car that appears in the camera image
+  - For cars in the middle of the image, I use a scale of 1 which is equivalent to a 64x64 search window
+  - For cars in the middle and foreground of the image I use a scale of 1.5 which is equivalent to a 96x96 search window
+- I apply a heat threshold (lesson_functions.py line 270) to my second search iteration to filter out lesser detections bounding boxes and most likely false positives detected
+- I import deque from the collections library to store a global variable of the running average of the last 10 frames and project a combination of heat boxes within those 10 frames
+- Applying scipy.ndimage.measurements' label algorithm makes it easier concatenate all the heat boxes into one bounding box
+- Together with deque and label, I am able to alleviate the unstableness of the bounding boxes and even out the detections
 
 ---
 
@@ -89,6 +95,6 @@ As I mentioned earlier,
 
 **1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?**
 
-The main problems I faced was trying to maintain a smooth and static bounding boxes around the vehicles detected.  Visibility is a key factor in my pipeline.  Poor visibility due to contrast or lots of shadow can hinder the model, creating false positives or being unable to identify vehicles.  A sliding window approach for this task is also very slow and inefficient in my opinion. Doing this in real time can introduce high delay caused by unwanted processing time.  
+The main problems I faced was trying to maintain a smooth and static bounding boxes around the vehicles detected.  Visibility is a crucial factor for success.  Poor visibility due to contrast or lots of shadow can hinder the model, creating false positives or being unable to identify vehicles.  The whole process is also very time-consuming and inefficient in python in my opinion. Doing this in real time can introduce high delay caused by unwanted processing time.  There is also minimal false positives that appear for 1 or 2 frames but they are instantly corrected by the model.  
 
-To make this project more robust, we should implement a 10~20 frame moving average of the bounding boxes and also have a prediction element implemented where we identify/calculate the targeted vehicle speed and create a check every few seconds to continuously draw a smooth and static bounding box.  The processing speed for the video would also improve significantly. Furthermore, the bounding boxes drawn when two cars are too close to each other wouldn't merge, and false positives that aren't able to persist for more than a few frames would simply be filtered out.
+To make this project more robust, we should implement a prediction element where we identify/calculate the targeted vehicle, or number of vehicles, and track their speed and measured distance.  Once tracked we can draw a smooth prediction bounding box based on the parameters calculated, and check every few seconds to recalibrate their speeds/distance.  The processing speed for the video should also improve significantly. Furthermore, the bounding boxes drawn when two cars converges next to each other wouldn't merge, and false positives that aren't able to persist for more than a few frames would simply be filtered out.
