@@ -15,7 +15,7 @@ The goals / steps of this project are the following:
 
 **1. Explain how (and identify where in your code) you extracted HOG features from the training images.**
 
-I use a series of functions combined with their properties into a function called `extract_features()` (lesson_functions.py line 52) to extract HOG features from the training images.  The steps consists of computing the gradient image in x and y coordinates to a chosen color space, computing the gradient histograms, normalizing the process and flattening everything into a feature vector.  The main algorithm utilized is scikit-image's hog feature that does the processing.  
+I use a series of functions combined with their properties into a function called `extract_features()` (lesson_functions.py line 52) to extract HOG features from the training images.  The steps consists of computing the gradient image in x and y coordinates to a chosen color space, computing the gradient histograms, normalizing the process and flattening everything into a feature vector.  The main algorithm utilized is scikit-image's `hog` feature that does the processing.  
 
 Examples of the hog feature images:
 
@@ -24,7 +24,7 @@ Examples of the hog feature images:
 
 **2. Explain how you settled on your final choice of HOG parameters.**
 
-I increased the orientation value to have a greater distribution of gradient directions to slightly increase the classification elements.  It's difficult to visually identify the differences in the HOG feature image when you change the values, so my main decision criterion for the parameters was decided by the performance of the classifier I trained.  The hog images for cars clearly illustrates a shape resembling a car and for non-cars the directions of the gradients were more scattered and harder to identify. Having more hog channels should further define this element.  After testing, it appears that the choice of color space has the biggest impact in the performance of the model and YCrCb seemed to perform the best. Tuning the other parameters had little to no impact on the performance and thus were left as the default values showcased in the lessons.  
+I increased the orientation value to have a greater distribution of gradient directions to slightly increase the classification elements.  It's difficult to visually identify the differences in the HOG feature image when you change the values, so my main decision criterion for the parameters was decided by the performance of the classifier I trained.  The hog images for cars clearly illustrates a shape resembling a car and for non-cars the directions of the gradients were more scattered and harder to identify. Having more hog channels should further define this element.  After testing, it appears that the choice of color space has the biggest impact in the performance of the model and `YCrCb` seemed to perform the best. Tuning the other parameters had little to no impact on the performance and thus were left as the default values showcased in the lessons.  
 
 Final parameters:
 
@@ -45,8 +45,8 @@ Final parameters:
 **3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).**
 
 - I use scikit-learn's Linear Support Vector Classification (LinearSVC) to train my classifier (svc.py line 65).
-- During this process, I apply scikit-learn's StandardScaler to standardize the features extracted by removing the mean and scaling to unit variance  
-- By using the extract_features() function (lesson_functions.py line 52), I can extract and create arrays for the feature vectors and label vectors of the car and non-car datasets
+- During this process, I apply `scikit-learn's` `StandardScaler` to standardize the features extracted by removing the mean and scaling to unit variance  
+- By using `extract_features()` (lesson_functions.py line 52), I can extract and create arrays for the feature vectors and label vectors of the car and non-car datasets
 - I randomize and split the arrays into training data and test data sets
 - The LinearSVC function is executed in the end to train the model.
 - The end result projected a 99% performance accuracy using the parameters above.  
@@ -84,9 +84,11 @@ Here's a [link to my video result](./project_video_output.mp4)
 - To increase the accuracy, I run a hog sub-sampling window search twice with different scales and area of interest to apply a more calculated search based on the size of the car that appears in the camera image
   - For cars in the middle of the image, I use a scale of 1 which is equivalent to a 64x64 search window
   - For cars in the middle and foreground of the image I use a scale of 1.5 which is equivalent to a 96x96 search window
+  - Having more window searches may further improve accuracy but greatly sacrifices performance
+  - Two window searches for vehicle detection seemed to be sufficient after testing
 - I apply a heat threshold (lesson_functions.py line 270) to my second search iteration to filter out lesser detections bounding boxes and most likely false positives detected
-- I import deque from the collections library to store a global variable of the running average of the last 10 frames and project a combination of heat boxes within those 10 frames
-- Applying scipy.ndimage.measurements' label algorithm makes it easier concatenate all the heat boxes into one bounding box
+- I import `deque` from the `collections` library to store a global variable of the running average of the last 10 frames and project a combination of heat boxes within those 10 frames
+- Applying `scipy.ndimage.measurements.label` algorithm makes it easier concatenate all the heat boxes into one bounding box
 - Together with deque and label, I am able to alleviate the unstableness of the bounding boxes and even out the detections
 
 ---
