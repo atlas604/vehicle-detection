@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 import cv2
 from lesson_functions import *
-from training_data import *
+from train_data import *
 
 import time
 from sklearn.svm import LinearSVC
@@ -85,5 +85,10 @@ svc_dict = { 'svc':svc,
              'pix_per_cell':pix_per_cell,
              'cell_per_block':cell_per_block,
              'spatial_size':spatial_size,
-             'hist_bins':hist_bins }
+             'hist_bins':hist_bins,
+             'color_space':color_space,
+             'hog_channel':hog_channel,
+             'spatial_feat':spatial_feat,
+             'hist_feat':hist_feat,
+             'hog_feat':hog_feat, }
 pickle.dump(svc_dict, open("svc_pickle.p", "wb" ) )
